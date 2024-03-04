@@ -1,4 +1,5 @@
 import re
+import select
 import socket
 import sys
 import threading
@@ -90,10 +91,7 @@ def main():
     udp_socket.sendto(msg.encode(), (SERVER_HOST, SERVER_PORT))
 
     # Create a Multicast socket
-
-    # send_mess_thread = threading.Thread(target=send_messages, args=(
-    #     tcp_socket, udp_socket, client_id,))
-    # send_mess_thread.start()
+    # multicast_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
     tcp_recv_thread = threading.Thread(target=receive_messages, args=(tcp_socket, "TCP",))
     udp_recv_thread = threading.Thread(target=receive_messages, args=(udp_socket, "UDP",))
@@ -108,7 +106,14 @@ def main():
     print("-" * 100)
     try:
         while not server_open.is_set():
-            message = input("")
+
+            message, _, _ = select.select([sys.stdin], [], [], 5)
+
+            if not message:
+                continue
+
+            message = sys.stdin.readline().strip()
+
             if message == "Q":
                 print("Client quiting server")
                 break
@@ -117,7 +122,9 @@ def main():
                 udp_communication(client_id, udp_socket, SERVER_HOST, SERVER_PORT, "UDP")
                 continue
             if message == "M":
-                udp_communication(client_id, udp_socket, MULTICAST_GROUP, MULTICAST_PORT, "Multicast")
+                print("Multicast")
+                # udp_communication(client_id, udp_socket, MULTICAST_GROUP, MULTICAST_PORT, "Multicast")
+                # multicast_socket.send("helllo".encode())
                 continue
 
             tcp_socket.sendall(message.encode())
@@ -135,11 +142,13 @@ def main():
             print("Shutting down sockets")
             tcp_socket.shutdown(socket.SHUT_RDWR)
             udp_socket.shutdown(socket.SHUT_RDWR)
+            # multicast_socket.shutdown(socket.SHUT_RDWR)
         except OSError:
             pass
 
         tcp_socket.close()
         udp_socket.close()
+        # multicast_socket.close()
 
         udp_recv_thread.join()
         tcp_recv_thread.join()
