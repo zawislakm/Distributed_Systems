@@ -1,6 +1,7 @@
 import re
 import select
 import socket
+import struct
 import sys
 import threading
 
@@ -8,10 +9,7 @@ SERVER_HOST = '127.0.0.1'
 SERVER_PORT = 8837
 
 MULTICAST_GROUP = '224.1.1.1'
-MULTICAST_PORT = 5007
-
-# TODO multicast
-
+MULTICAST_PORT = 5009
 
 server_open = threading.Event()
 
@@ -26,6 +24,7 @@ def receive_messages(client_socket: socket, communication_type: str):
             if not data:
                 server_open.set()
                 raise OSError
+
             print(data.decode())
 
         else:
@@ -68,7 +67,7 @@ def udp_communication(client_id: int, udp_socket: socket, host: str, port: int, 
             if message == "\n":
                 continue
 
-            new_message = f"{client_id}:{message}"
+            new_message = f"{communication_type}{client_id}:\n{message}"
             udp_socket.sendto(new_message.encode('utf-8'), (host, port))
 
     except KeyboardInterrupt:
@@ -82,7 +81,6 @@ def main():
     # Create a TCP socket
     tcp_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     tcp_socket.connect((SERVER_HOST, SERVER_PORT))
-
     client_id = get_client_id(tcp_socket)
 
     # Create a UDP socket
@@ -91,15 +89,24 @@ def main():
     udp_socket.sendto(msg.encode(), (SERVER_HOST, SERVER_PORT))
 
     # Create a Multicast socket
-    # multicast_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    multicast_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
+    multicast_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    multicast_socket.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, 2)
+    multicast_socket.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_LOOP, 0) # TODO make it work
+    multicast_socket.bind((MULTICAST_GROUP, MULTICAST_PORT))
+    mreq = struct.pack("4sl", socket.inet_aton(MULTICAST_GROUP), socket.INADDR_ANY)
+    multicast_socket.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, mreq)
 
     tcp_recv_thread = threading.Thread(target=receive_messages, args=(tcp_socket, "TCP",))
     udp_recv_thread = threading.Thread(target=receive_messages, args=(udp_socket, "UDP",))
-    # multicast_recv_thread = threading.Thread(target=receive_messages, args=(multicast_socket, "Multicast",))
+    multicast_recv_thread = threading.Thread(target=receive_messages, args=(multicast_socket, "Multicast",))
 
     tcp_recv_thread.start()
     udp_recv_thread.start()
-    # multicast_recv_thread.start()
+    multicast_recv_thread.start()
+
+    message = f"Multicast{client_id}: Client {client_id} joined multicast group"
+    multicast_socket.sendto(message.encode(), (MULTICAST_GROUP, MULTICAST_PORT))
 
     print("Sending messages to server started")
 
@@ -122,9 +129,7 @@ def main():
                 udp_communication(client_id, udp_socket, SERVER_HOST, SERVER_PORT, "UDP")
                 continue
             if message == "M":
-                print("Multicast")
-                # udp_communication(client_id, udp_socket, MULTICAST_GROUP, MULTICAST_PORT, "Multicast")
-                # multicast_socket.send("helllo".encode())
+                udp_communication(client_id, udp_socket, MULTICAST_GROUP, MULTICAST_PORT, "Multicast")
                 continue
 
             tcp_socket.sendall(message.encode())
@@ -142,17 +147,20 @@ def main():
             print("Shutting down sockets")
             tcp_socket.shutdown(socket.SHUT_RDWR)
             udp_socket.shutdown(socket.SHUT_RDWR)
-            # multicast_socket.shutdown(socket.SHUT_RDWR)
+            multicast_socket.shutdown(socket.SHUT_RDWR)
         except OSError:
             pass
 
+        message = f"Multicast{client_id}: Client {client_id} is leaving multicast group"
+        multicast_socket.sendto(message.encode(), (MULTICAST_GROUP, MULTICAST_PORT))
+
         tcp_socket.close()
         udp_socket.close()
-        # multicast_socket.close()
+        multicast_socket.close()
 
         udp_recv_thread.join()
         tcp_recv_thread.join()
-        # multicast_recv_thread.join()
+        multicast_recv_thread.join()
 
         print("Client ended")
         sys.exit(0)

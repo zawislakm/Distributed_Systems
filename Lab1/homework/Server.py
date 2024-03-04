@@ -31,7 +31,7 @@ class Client:
                 break
             # Echo the received data back to the client
             # client_socket.sendall(data)
-            new_message = f"T{self.id}:{data.decode()}"
+            new_message = f"TCP{self.id}:{data.decode()}"
             self.send_to_all_clients(new_message.encode())
 
         if self.active is not False:
@@ -97,7 +97,7 @@ def handle_udp_communication(udp_socket: socket):
                 print(f"Accepted UDP connection from client {client_id} with  address {address}, saved to the server.")
                 continue
 
-            new_message = f"U{client.id}:\n{message}"
+            new_message = f"UDP{client.id}:{message}"
 
             client.send_to_all_clients(new_message.encode('utf-8'), udp=True)
 
