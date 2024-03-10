@@ -68,7 +68,6 @@ class Client:
         with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
             s.sendto(message, self.udp_address)
 
-
     @classmethod
     def get_udp_address(cls) -> set:
         return set([client.udp_address for client in Client.instances.values() if client.udp_address is not None])
@@ -82,11 +81,10 @@ def handle_udp_communication(udp_socket: socket):
     print("Sever UDP communication handler running...")
     try:
         while not exit_flag.is_set():
-
             data, address = udp_socket.recvfrom(1024)
 
             client_id, message = data.decode().split(":")
-            client = Client.instances.get(int(client_id))
+            client = Client.instances.get(int(client_id[3:]))
 
             if client is None:
                 print(f"Client {client_id} not found")
@@ -116,7 +114,7 @@ def main():
     # Create a TCP socket
     print("Server TCP starting...")
     tcp_server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    tcp_server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)  # TODO, doit better
+    tcp_server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     tcp_server_socket.bind((host, port))
     tcp_server_socket.listen(max_users)
     print("Server TCP started")
@@ -149,7 +147,6 @@ def main():
             client_thread = threading.Thread(target=client.handle_tcp_communication)
             clients_threads.append(client_thread)
             client_thread.start()
-
 
     except KeyboardInterrupt:
         print("-" * 170)

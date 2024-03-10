@@ -64,7 +64,7 @@ def udp_communication(client_id: int, udp_socket: socket, host: str, port: int, 
 
             if message == "Q\n":
                 break
-            if message == "\n":
+            if message == "\n" or message == "":
                 continue
 
             new_message = f"{communication_type}{client_id}:\n{message}"
@@ -84,7 +84,7 @@ def main():
     client_id = get_client_id(tcp_socket)
 
     # Create a UDP socket
-    msg = f"{client_id}: UDP communication started from client {client_id}"
+    msg = f"UDP{client_id}: UDP communication started from client {client_id}"
     udp_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     udp_socket.sendto(msg.encode(), (SERVER_HOST, SERVER_PORT))
 
@@ -92,7 +92,7 @@ def main():
     multicast_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
     multicast_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     multicast_socket.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, 2)
-    multicast_socket.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_LOOP, 0) # TODO make it work
+    # multicast_socket.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_LOOP, 0) #
     multicast_socket.bind((MULTICAST_GROUP, MULTICAST_PORT))
     mreq = struct.pack("4sl", socket.inet_aton(MULTICAST_GROUP), socket.INADDR_ANY)
     multicast_socket.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, mreq)
@@ -105,8 +105,8 @@ def main():
     udp_recv_thread.start()
     multicast_recv_thread.start()
 
-    message = f"Multicast{client_id}: Client {client_id} joined multicast group"
-    multicast_socket.sendto(message.encode(), (MULTICAST_GROUP, MULTICAST_PORT))
+    message = f"Multicast{client_id}: Client {client_id} joined {MULTICAST_GROUP} group"
+    multicast_socket.sendto(message.encode('utf-8'), (MULTICAST_GROUP, MULTICAST_PORT))
 
     print("Sending messages to server started")
 
@@ -151,8 +151,8 @@ def main():
         except OSError:
             pass
 
-        message = f"Multicast{client_id}: Client {client_id} is leaving multicast group"
-        multicast_socket.sendto(message.encode(), (MULTICAST_GROUP, MULTICAST_PORT))
+        message = f"Multicast{client_id}: Client {client_id} is leaving {MULTICAST_GROUP} group"
+        multicast_socket.sendto(message.encode('utf-8'), (MULTICAST_GROUP, MULTICAST_PORT))
 
         tcp_socket.close()
         udp_socket.close()
