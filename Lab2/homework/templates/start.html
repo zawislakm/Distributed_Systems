@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Start</title>
+</head>
+<body>
+    <h1>Start:</h1>
+    <form id="myForm">
+        <label for="city">City:</label>
+        <input type="text" id="city" name="city" required><br><br>
+        <label for="apiKey">API Key:</label>
+        <input type="text" id="apiKey" name="apiKey" required><br><br>
+        <button type="button" onclick="sendRequest()">Get Result</button>
+    </form>
+
+   <script>
+    function sendRequest() {
+        var city = document.getElementById("city").value;
+        var apiKey = document.getElementById("apiKey").value;
+        var xhr = new XMLHttpRequest();
+        var url = "/airquality";
+        xhr.open("POST", url, true);
+        xhr.setRequestHeader("APIKEY", apiKey);
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                document.body.innerHTML = xhr.responseText;
+            }
+        };
+        var formData = new FormData();
+        formData.append("city", city);
+        xhr.send(formData);
+    }
+</script>
+
+
+</body>
+</html>
