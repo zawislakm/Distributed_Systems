@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 from fastapi import FastAPI, Request, Form, HTTPException, Depends
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
+from fastapi.responses import JSONResponse
 
 load_dotenv()
 weatherAPI = os.getenv('weatherAPI')
@@ -23,12 +24,12 @@ templates = Jinja2Templates(directory="templates")
 
 @app.exception_handler(HTTPException)
 async def HTTPExceptionHandler(request: Request, error: HTTPException):
-    return templates.TemplateResponse("error.html", context={'request': request, "error": error.detail})
+    return templates.TemplateResponse("error.html", context={'request': request, "error": error.detail},status_code=400)
 
 
 @app.exception_handler(Exception)
 async def OtherExceptionHandler(request: Request, error: Exception):
-    return templates.TemplateResponse("error.html", context={'request': request, "error": str(error)})
+    return templates.TemplateResponse("error.html", context={'request': request, "error": str(error)},status_code=400)
 
 
 def verify_apikey(request: Request) -> bool:
@@ -49,16 +50,15 @@ async def main(request: Request):
     return templates.TemplateResponse("start.html", context={"request": request})
 
 
-@app.post("/airquality", response_class=HTMLResponse)
+@app.post("/airquality")
 async def result(request: Request, verify: bool = Depends(verify_apikey), city: Optional[str] = Form(None)):
-    print(city)
     if city is None:
         raise HTTPException(status_code=401, detail="No city provided")
 
     context = get_weather(city)
-    context['request'] = request
-    return templates.TemplateResponse("output.html", context=context)
-
+    # context['request'] = request
+    # return templates.TemplateResponse("output.html", context=context)
+    return JSONResponse(content=context)
 
 class AirInfo:
 
