@@ -1,0 +1,8 @@
+2 thrift --gen py calculator.thrift
+
+2.7  12 bajtow, tcp
+2.8 TBinary -> 12 bajtow
+    Compact -> 12 bajtow
+    Json -> 12 bajatow
+2.9 wszystko jest uwazane za CalcHandler#1 nie wazne czy jest różne czy takie samo
+2.10 dziala poprawnie dla takich samych oraz różnych

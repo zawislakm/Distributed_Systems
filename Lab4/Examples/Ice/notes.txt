@@ -1,0 +1,39 @@
+5. nazwy pochodzą z pliku slice/calcuator.ice
+7. używa 2, tcp i udp, netstat -nlp|grep 10000
+9.1  calcServant1/calcServant2
+9.2 2
+9.3 calc11, calc22
+9.4 calc11, 			ObjectPrx base1 = communicator.stringToProxy("calc/calc11:tcp -h 127.0.0.2 -p 10000 -z : udp -h 127.0.0.2 -p 10000 -z"); //opcja -z włącza możliwość kompresji wiadomości
+9.5 			CalcPrx obj1 = CalcPrx.checkedCast(base1);
+9.6 blad
+12.1 rozumie, widzi Request(): calc11.add(), Reply(): succes
+12.2 ?
+12.2 zmienic IP w clicncie, w serwerze nic,
+15.1 Operacje idempotente informuja ze wysyloani metody kilka razy z tymi samymi argumentami, zawsze skonczy sie tak samo
+15.2 np. setVal,
+15.3 add, subtract
+17.1 wywloanie czeka w whenComplete i przy otrzymaniu wyniku pokazuje go
+17.2 wywyaływac warto wszystkie co dlugo moze sie liczyc i dalsze działanie tego programu nie wymage wynikow obiliczen
+17.3 nie
+19.1 operacja oneway nie oczekuje na odpwiedz
+19.2 brak zwracanej wartosci
+19.3 op
+19.4 dla op wtedy dziala, dla add rzuca wyjatek, dla onewaya dziala szybcjie
+20.1 wysylanie przy pomocy datagramow np udp
+20.2 wymage aby kilient i serwer dzialai na odpwoiedzmy proxy
+20.3 wszystko po za avg, które moze rzucac wyjatkiem
+20.4 wczesniejsze wnioski zle, działa tylko dla op
+21.1 agregacja wywołan polega na zbieraniu żądań w jedno wieksze
+21.2 mozliwosc grupowania, zrozumienie czy agregacjia nic nie zepsuje,
+21.3 wydaje sie że agregowane moga byc tylko op
+21.4 trzeba ustawić set-proxy batch oneway, 21 nie ogarniam
+22.1 w drugim jest tak dlugi string ze trzeba zrobic compresje
+22.2 odpowiedzi nie sa compressowane
+22.3 akrywancja jest porzadana kiedy wiadomosci moga byc dlugie
+22.4 wyłaczenie kompresji zadziałało bez usuwania flagi
+23 przy odkomentowaniu Ice.Trace.Network=2, zamyka sie po jakims czasie nieaktywnosci
+
+
+
+
+

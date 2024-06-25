@@ -1,0 +1,13 @@
+protoc.exe -I. --java_out=gen person.proto 
+protoc.exe -I. --java_out=gen --plugin=protoc-gen-grpc-java=protoc-gen-grpc-java-1.62.2-windows-x86_64.exe --grpc-java_out=gen calculator.proto 
+protoc.exe -I. --java_out=gen --plugin=protoc-gen-grpc-java=protoc-gen-grpc-java-1.62.2-windows-x86_64.exe --grpc-java_out=gen streaming.proto 
+
+
+/home/maks/protoc-26.1-linux-x86_64/bin/./protoc  -I. --java_out=gen --plugin=protoc-gen-grpc-java=protoc-gen-grpc-java-1.62.2-linux-x86_64.exe --grpc-java_out=gen calculator.proto
+
+
+/home/maks/protoc-26.1-linux-x86_64/bin/./protoc -I. --java_out=gen person.proto
+/home/maks/protoc-26.1-linux-x86_64/bin/./protoc  -I. --java_out=gen --plugin=protoc-gen-grpc-java=protoc-gen-grpc-java-1.62.2-linux-x86_64.exe --grpc-java_out=gen calculator.proto
+
+
+/home/maks/protoc-26.1-linux-x86_64/bin/./protoc  -I. --java_out=gen --plugin=protoc-gen-grpc-java=protoc-gen-grpc-java-1.62.2-linux-x86_64.exe --grpc-java_out=gen /home/maks/vsc/Distributed_Systems/Lab4/A.2/client/flashscore.proto

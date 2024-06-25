@@ -1,0 +1,24 @@
+2.3.7 szybsze jest protoSerialization 22 millisenudy do 44
+2.3.8 sa takie same, komneda pokazuje tylko numery, niedekcudj floatow
+2.3.9 pokazuje nazywy,
+2.3.10 o 28 przy 3 znakach
+
+2.4.7 Message <UNKNOWN> unit32, 6bytes w obu przypdakch
+2.4.9 kilinecki mechnizm, o sobie czeka tyle ile tam bedzie chcial, potem go nie obhcodzi wynik
+2.4.10 dziala, nie moge znalezc jak zglasza sie wyjatki w proto
+2.4.11 da sie równoczesnie udostepniac różne oraz takie same, (nie wiem jak sprawdizc ktory jest używany przy dwoch takich samcyh)
+2.4.13.1 kilient raz do serwera, serwer caly czas
+2.4.13.2 nie wiem jak z tym natem, czy ulatwia komunikacje z natem? chyba tak bo idzie to na jednym tcp
+2.4.13.3 ostatnie wywloanie zawiera jeszcze headers[13], gdzie pozostale mialy tylko data[13]
+2.4.14.1 analogiczny obrazek polczenia
+2.4.14.2 nie wiem jak z tym natem
+2.4.15 wszystko idzie rownoczesnie bardzo dobrze
+2.4.16 ping jest wysylany aby podtrzymac komunikacje tcp
+2.4.17 ningx dla chetnych byl
+
+2.4.18.5 wysylane jest headers #54
+2.4.18.6 headers # 58
+
+
+
+
