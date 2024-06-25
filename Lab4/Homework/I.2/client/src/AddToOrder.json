@@ -1,0 +1,15 @@
+{
+  "id": 1,
+  "basket": {
+    "items": [
+      "beer",
+      "sausage",
+      "apple"
+    ],
+    "amounts": {
+      "beer": 1,
+      "sausage": 4,
+      "apple": 5
+    }
+  }
+}

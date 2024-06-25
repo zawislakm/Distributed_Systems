@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+
+message Client {
+  string firstname = 1;
+  string lastname = 2;
+  string email = 3;
+}
+
+message DeliveryAddress{
+  string street = 1;
+  uint32 house_number = 2;
+  optional uint32 flat_number = 3;
+  string city = 4;
+  string country = 5;
+}
+
+message Basket{
+  repeated string items = 1;
+  map<string, int32> amounts = 2;
+}
+
+message Order{
+  optional uint32 id = 1;
+  Basket basket = 2;
+  Client client = 3;
+  DeliveryAddress address = 4;
+}
+
+message GetOrderRequest{
+  uint32 id = 1;
+}
+
+message UpdateOrderRequest{
+  uint32 id = 1;
+  Basket basket = 2;
+}
+
+service StoreService {
+  rpc GetOrder(GetOrderRequest) returns (Order) {}
+  rpc CreateOrder(Order) returns (Order) {}
+  rpc AddItemsToOrder(UpdateOrderRequest) returns (Order) {}
+}

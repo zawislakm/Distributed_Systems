@@ -1,0 +1,14 @@
+
+
+Zalety
+Elastycznosc - klient nie musi znac interfejsow serwera, uczy sie w czasie dzialania, pozwala to latwiej rozwiac kod kilenta
+Latwy update - przy zmianach na serverze, nie zawsze bedzie trzeba zmienca kodu klienta, zmian klient nauczy sie dynamicznie
+Szybsze tworzenie kodu - nie trzeba generowac kodu dla interfejsow, nie trzeba synchronoziwoac interfesju servera i klienta
+
+Wady
+Bledy - ciezej bedzie wykryc bledy, moga pojawic sie dopiero przy dzialaniau a nie kompilacji
+Wieksze zuzycie zasobów - dynamiczne wywolania moga potrzebowac wiecej zasobow, moze tez to spowalniac prace
+Trudneijsza implentacj - kod jest mniej czytleny
+
+Moze sie przydawac tam gdzie eletycznosc i szybkosc aktualizacji jest wymagana. (jaki przykład apliakcji?) i wady sa
+do zaakapetowacnia
